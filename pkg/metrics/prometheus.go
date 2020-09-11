@@ -137,17 +137,17 @@ func initStandardRegistry(config *types.Prometheus) Registry {
 	if config.AddEntryPointsLabels {
 		entryPointReqs := newCounterFrom(promState.collectors, stdprometheus.CounterOpts{
 			Name: entryPointReqsTotalName,
-			Help: "How many HTTP requests processed on an entrypoint, partitioned by status code, protocol, and method.",
-		}, []string{"code", "method", "protocol", "entrypoint"})
+			Help: "How many HTTP requests processed on an entrypoint, partitioned by status code, protocol, method, and path.",
+		}, []string{"code", "method", "protocol", "entrypoint", "path"})
 		entryPointReqsTLS := newCounterFrom(promState.collectors, stdprometheus.CounterOpts{
 			Name: entryPointReqsTLSTotalName,
 			Help: "How many HTTP requests with TLS processed on an entrypoint, partitioned by TLS Version and TLS cipher Used.",
 		}, []string{"tls_version", "tls_cipher", "entrypoint"})
 		entryPointReqDurations := newHistogramFrom(promState.collectors, stdprometheus.HistogramOpts{
 			Name:    entryPointReqDurationName,
-			Help:    "How long it took to process the request on an entrypoint, partitioned by status code, protocol, and method.",
+			Help:    "How long it took to process the request on an entrypoint, partitioned by status code, protocol, method, and path.",
 			Buckets: buckets,
-		}, []string{"code", "method", "protocol", "entrypoint"})
+		}, []string{"code", "method", "protocol", "entrypoint", "path"})
 		entryPointOpenConns := newGaugeFrom(promState.collectors, stdprometheus.GaugeOpts{
 			Name: entryPointOpenConnsName,
 			Help: "How many open connections exist on an entrypoint, partitioned by method and protocol.",
