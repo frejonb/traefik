@@ -134,13 +134,13 @@ func initStandardRegistry(config *types.Prometheus) Registry {
 	if config.AddEntryPointsLabels {
 		entryPointReqs := newCounterFrom(promState.collectors, stdprometheus.CounterOpts{
 			Name: entryPointReqsTotalName,
-			Help: "How many HTTP requests processed on an entrypoint, partitioned by status code, protocol, and method.",
-		}, []string{"code", "method", "protocol", "entrypoint"})
+			Help: "How many HTTP requests processed on an entrypoint, partitioned by status code, protocol, method, and path.",
+		}, []string{"code", "method", "protocol", "entrypoint", "path"})
 		entryPointReqDurations := newHistogramFrom(promState.collectors, stdprometheus.HistogramOpts{
 			Name:    entryPointReqDurationName,
-			Help:    "How long it took to process the request on an entrypoint, partitioned by status code, protocol, and method.",
+			Help:    "How long it took to process the request on an entrypoint, partitioned by status code, protocol, method, and path.",
 			Buckets: buckets,
-		}, []string{"code", "method", "protocol", "entrypoint"})
+		}, []string{"code", "method", "protocol", "entrypoint", "path"})
 		entryPointOpenConns := newGaugeFrom(promState.collectors, stdprometheus.GaugeOpts{
 			Name: entryPointOpenConnsName,
 			Help: "How many open connections exist on an entrypoint, partitioned by method and protocol.",
@@ -158,13 +158,13 @@ func initStandardRegistry(config *types.Prometheus) Registry {
 	if config.AddServicesLabels {
 		serviceReqs := newCounterFrom(promState.collectors, stdprometheus.CounterOpts{
 			Name: serviceReqsTotalName,
-			Help: "How many HTTP requests processed on a service, partitioned by status code, protocol, and method.",
-		}, []string{"code", "method", "protocol", "service"})
+			Help: "How many HTTP requests processed on a service, partitioned by status code, protocol, method, and path.",
+		}, []string{"code", "method", "protocol", "service", "path"})
 		serviceReqDurations := newHistogramFrom(promState.collectors, stdprometheus.HistogramOpts{
 			Name:    serviceReqDurationName,
-			Help:    "How long it took to process the request on a service, partitioned by status code, protocol, and method.",
+			Help:    "How long it took to process the request on a service, partitioned by status code, protocol, method, and path.",
 			Buckets: buckets,
-		}, []string{"code", "method", "protocol", "service"})
+		}, []string{"code", "method", "protocol", "service", "path"})
 		serviceOpenConns := newGaugeFrom(promState.collectors, stdprometheus.GaugeOpts{
 			Name: serviceOpenConnsName,
 			Help: "How many open connections exist on a service, partitioned by method and protocol.",
