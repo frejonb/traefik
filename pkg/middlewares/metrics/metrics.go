@@ -92,9 +92,18 @@ func (m *metricsMiddleware) ServeHTTP(rw http.ResponseWriter, req *http.Request)
 	recorder := newResponseRecorder(rw)
 	m.next.ServeHTTP(recorder, req)
 
-	labels = append(labels, "code", strconv.Itoa(recorder.getCode()), "path", getPath(req))
+	labels = append(labels, "code", strconv.Itoa(recorder.getCode()), "host", getHost(req), "path", getPath(req))
 	m.reqsCounter.With(labels...).Add(1)
 	m.reqDurationHistogram.With(labels...).Observe(time.Since(start).Seconds())
+}
+
+func getHost(req *http.Request) string {
+	host := req.Host
+	if host != "" {
+		return host
+	} else {
+		return "undefined"
+	}
 }
 
 func getPath(req *http.Request) string {
