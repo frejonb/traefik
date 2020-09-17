@@ -354,6 +354,8 @@ func TestPrometheusRemovedMetricsReset(t *testing.T) {
 		"code", strconv.Itoa(http.StatusOK),
 		"method", http.MethodGet,
 		"protocol", "http",
+		"host", "example.com",
+		"path", "/foo/bar",
 	}
 	prometheusRegistry.
 		ServiceReqsCounter().
