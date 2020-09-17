@@ -98,3 +98,73 @@ func TestCloseNotifier(t *testing.T) {
 		})
 	}
 }
+
+func TestGetHost(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "https://foo.bar/baz", nil)
+	host := getHost(req)
+
+	wantHost := "foo.bar"
+	if host != wantHost {
+		t.Errorf("got host value of %s, want %s", host, wantHost)
+	}
+}
+
+func TestKeepMetric(t *testing.T) {
+	host1 := "foo.bar"
+	host2 := "api.bar"
+	toKeep1 := keepMetric(host1)
+	toKeep2 := keepMetric(host2)
+
+	wantToKeep1 := false
+	if toKeep1 != wantToKeep1 {
+		t.Errorf("got keep metric value of %t, want %t", toKeep1, wantToKeep1)
+	}
+	wantToKeep2 := true
+	if toKeep2 != wantToKeep2 {
+		t.Errorf("got keep metric value of %t, want %t", toKeep2, wantToKeep2)
+	}
+}
+
+func TestGetPath(t *testing.T) {
+	testCases := []struct {
+		desc     string
+		req      *http.Request
+		wantPath string
+	}{
+		{
+			desc:     "Empty path.",
+			req:      httptest.NewRequest(http.MethodGet, "https://foo.bar", nil),
+			wantPath: "undefined",
+		},
+		{
+			desc:     "Path does not match regex should be left alone.",
+			req:      httptest.NewRequest(http.MethodGet, "https://foo.bar/v1.2/baz/fizz/buzz", nil),
+			wantPath: "/v1.2/baz/fizz/buzz",
+		},
+		{
+			desc:     "Path that matches regex should be modified.",
+			req:      httptest.NewRequest(http.MethodGet, "https://foo.bar/v1.2/service/foo", nil),
+			wantPath: "/v1.2/service/foo",
+		},
+		{
+			desc:     "Long path that matches regex should be modified.",
+			req:      httptest.NewRequest(http.MethodGet, "https://foo.bar/v1.2/service/foo/bar/baz", nil),
+			wantPath: "/v1.2/service/foo",
+		},
+		{
+			desc:     "Path with params should not include params.",
+			req:      httptest.NewRequest(http.MethodGet, "https://foo.bar/v1.2/service/foo?bar=baz", nil),
+			wantPath: "/v1.2/service/foo",
+		},
+	}
+
+	for _, test := range testCases {
+		test := test
+		t.Run(test.desc, func(t *testing.T) {
+			t.Parallel()
+
+			ok := getPath(test.req)
+			assert.Equal(t, test.wantPath, ok)
+		})
+	}
+}
